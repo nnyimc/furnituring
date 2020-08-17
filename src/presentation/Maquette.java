@@ -6,10 +6,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.JButton;
@@ -25,6 +28,7 @@ public class Maquette extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private JTree catalogTree;
 	private JPanel contentPane;
 	private JTable furnitureTable;
 
@@ -36,6 +40,7 @@ public class Maquette extends JFrame {
 			public void run() {
 				try {
 					Maquette frame = new Maquette();
+					frame.setSize(600, 800);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -48,6 +53,7 @@ public class Maquette extends JFrame {
 	 * Create the frame.
 	 */
 	public Maquette() {
+		setTitle("Furnituring");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
@@ -125,26 +131,29 @@ public class Maquette extends JFrame {
 		setContentPane(contentPane);
 		
 		JSplitPane mainSplitPane = new JSplitPane();
+		mainSplitPane.setResizeWeight(0.3);
 		mainSplitPane.setBackground(Color.WHITE);
 		contentPane.add(mainSplitPane, BorderLayout.CENTER);
 		
 		JSplitPane leftSplitPane = new JSplitPane();
+		leftSplitPane.setResizeWeight(0.5);
 		leftSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setLeftComponent(leftSplitPane);
 		
 		JScrollPane topLeftScrollPane = new JScrollPane();
 		leftSplitPane.setLeftComponent(topLeftScrollPane);
 		
-		JTree catalogTree = new JTree();
+		JTree catalogTree = getCatalogTree();
 		topLeftScrollPane.setViewportView(catalogTree);
 		
 		JScrollPane bottomLeftScrollPane = new JScrollPane();
 		leftSplitPane.setRightComponent(bottomLeftScrollPane);
 		
-		furnitureTable = new JTable();
+		furnitureTable = getFurnitureTable();
 		bottomLeftScrollPane.setViewportView(furnitureTable);
 		
 		JSplitPane rightSplitPane = new JSplitPane();
+		rightSplitPane.setResizeWeight(0.5);
 		rightSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		mainSplitPane.setRightComponent(rightSplitPane);
 		
@@ -179,5 +188,55 @@ public class Maquette extends JFrame {
 		pasteButton.setIcon(new ImageIcon("J:\\eWorkspace\\Furnituring\\resources\\pst.png"));
 		toolBar.add(pasteButton);
 	}
+	
+	private JTree getCatalogTree() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (null == catalogTree) {
+			DefaultMutableTreeNode bedroom = 
+					new DefaultMutableTreeNode("Bedroom");
+			bedroom.add(new DefaultMutableTreeNode("Bed 90 x 190"));
+			bedroom.add(new DefaultMutableTreeNode("Oak Chest"));
+			bedroom.add(new DefaultMutableTreeNode("Bedside table"));
+			
+			DefaultMutableTreeNode livingRoom = 
+					new DefaultMutableTreeNode("Living room");
+			livingRoom.add(new DefaultMutableTreeNode("Bookcase"));
+			livingRoom.add(new DefaultMutableTreeNode("Armchair"));
+			livingRoom.add(new DefaultMutableTreeNode("Coffee table"));
+			
+			DefaultMutableTreeNode furnitureRoot = 
+					new DefaultMutableTreeNode();
+			furnitureRoot.add(bedroom);
+			furnitureRoot.add(livingRoom);
+			
+			catalogTree = new JTree(furnitureRoot);
+			catalogTree.setRootVisible(false);
+			catalogTree.setShowsRootHandles(true);
+		}
+		return catalogTree;
+	}
+	
+	private JTable getFurnitureTable() {
+		if (null == furnitureTable) {
+			Object [] columns = {"Name", "Width", "Depth", "Heigth"};
+			Object [][] data = { 
+								{"Bed", 90, 190, 75 },
+								{"Oak Chest", 100, 90, 90 },
+								{"Table", 80, 60, 45 },
+								{"Armchair", 70, 90, 90 },
+								{"Bookcase", 80, 40, 190 }
+			};
+			furnitureTable = new JTable(data, columns);
+			
+		}
+		return furnitureTable;
+	}
+	
+	
 
 }
